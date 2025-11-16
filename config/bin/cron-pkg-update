@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus
+export DBUS_SESSION_BUS_ADDRESS
+export DISPLAY=:0
+
+# checks for internet connection.
+ping -q -c 1 8.8.8.8 >/dev/null || {
+  echo "No internet connection detected."
+  exit
+}
+
+# check for package updates
+PAC_UPDATABLE_NUM=$(checkupdates | wc -l)
+AUR_UPDATABLE_NUM=$(pacman -Qm | aur vercmp | wc -l)
+UPDATABLE_NUM=$((PAC_UPDATABLE_NUM + AUR_UPDATABLE_NUM))
+
+if [ "${UPDATABLE_NUM}" -eq 1 ]; then
+  MESSAGE="You Have 1 Package To Upgrade!"
+elif [ "${UPDATABLE_NUM}" -gt 1 ]; then
+  MESSAGE="You Have ${UPDATABLE_NUM} Packages To Upgrade!"
+fi
+
+if [ "${UPDATABLE_NUM}" != "0" ]; then
+  notify-send --icon=update-notifier "${MESSAGE}"
+fi

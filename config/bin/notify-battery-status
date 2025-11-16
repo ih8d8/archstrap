@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+TMP_FILE="/tmp/notify-battery-status-$(id -u)"
+USERNAME="$(/usr/bin/getent passwd 1000 | awk -F: '{print $1}')"
+
+[ -f ${TMP_FILE} ] || /usr/bin/touch ${TMP_FILE}
+if [ "$(/usr/bin/date +%s)" -gt "$(($(/usr/bin/cat ${TMP_FILE}) + 20))" ]; then
+  DISCHARGING="$(/usr/bin/acpi | /usr/bin/head -n1 | /usr/bin/grep 'Discharging')"
+  BATTERY_LEVEL="$(/usr/bin/acpi | /usr/bin/head -n1 | /usr/bin/grep -oP '(?<=, )\d+(?=%)')"
+
+  if [ -n "${DISCHARGING}" ] && [ "${BATTERY_LEVEL}" -le 15 ]; then
+    sudo -u "${USERNAME}" DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus /usr/bin/notify-send --icon=battery-low "Battery level is ${BATTERY_LEVEL}%!"
+  fi
+  /usr/bin/date +%s >${TMP_FILE}
+else
+  exit 0
+fi

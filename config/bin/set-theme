@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+THEME=$1
+ICON_THEME=$2
+: "${THEME:=Dracula}"
+: "${ICON_THEME:=Papirus-Dark}"
+
+xfconf-query -c xsettings -p /Net/ThemeName -s "${THEME}"
+gsettings set org.gnome.desktop.interface gtk-theme "${THEME}"
+gsettings set org.gnome.desktop.wm.preferences theme "${THEME}"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+xfconf-query -c xsettings -p /Net/IconThemeName -s "${ICON_THEME}"
+gsettings set org.gnome.desktop.interface icon-theme "${ICON_THEME}"
+
+# change papirus-folders color
+if [ "${ICON_THEME}" == "Papirus-Dark" ]; then
+    papirus-folders -C violet --theme Papirus-Dark
+fi

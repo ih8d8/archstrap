@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Purpose: Download and update adblocker list for dnscrypt proxy
+# Usage: Call it from the CLI or cron job https://www.cyberciti.biz/faq/how-do-i-add-jobs-to-cron-under-linux-or-unix-oses/
+
+BLACKLIST_FILE_PATH="/etc/dnscrypt-proxy/blocked-names.txt"
+
+# Blocks both adware + malware
+# See for other lists https://github.com/StevenBlack/hosts
+BLACKLIST_URL="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+
+# create temp files
+TMP_B_FILE="$(mktemp)"
+TMP_B_FILE_SORTED="$(mktemp)"
+
+# construct the command that gets the hosts list and saves it in a temp file
+COMMAND="wget --show-progress --timeout=10 --tries=5 -qO- \"${BLACKLIST_URL}\" | grep -Ev \"(localhost)\" | \
+    grep -Ev \"#\" | sed -E \"s/(0.0.0.0 |127.0.0.1 |255.255.255.255 )//\" >> \"${TMP_B_FILE}\""
+
+# run the command
+eval ${COMMAND}
+
+# check if the temp file is not empty
+[ -s "${TMP_B_FILE}" ] && \
+{
+    # sort temp file and save it in another temp file
+    awk '/^[^#]/ { print $1 }' "${TMP_B_FILE}" | sort -u > "${TMP_B_FILE_SORTED}"
+
+    # copy the sorted temp file to dnscrypt blacklist file path
+    cp -f "${TMP_B_FILE_SORTED}" "${BLACKLIST_FILE_PATH}";
+
+    # fix file permission
+    chmod 644 "${BLACKLIST_FILE_PATH}";
+}
+
+# remove temp files
+rm -f "${TMP_B_FILE}" "${TMP_B_FILE_SORTED}"
