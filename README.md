@@ -118,7 +118,7 @@ config/dotfiles/
 └── ... (your dotfiles)
 ```
 
-The [`init-user.sh`](config/dotfiles/extra/init-scripts/init-user.sh) script should handle:
+The `init-user.sh` script should handle:
 - Dotfiles symlinking or copying
 - Shell configuration
 - Application-specific setup
