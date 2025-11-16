@@ -6,29 +6,6 @@ if [[ -z "${LOG_FILE:-}" ]]; then
     source "${USER_SCRIPT_DIR}/../../utils/logging.sh"
 fi
 
-# Create sudoers custom config file
-create_sudoers_config() {
-    log "Creating sudoers custom configuration..."
-    
-    cat <<EOF >/mnt/etc/sudoers.d/custom_configs
-Defaults        !tty_tickets
-Defaults        env_reset,timestamp_timeout=60
-Cmnd_Alias      NOPASSWD_COMMANDS = /usr/bin/shutdown, /usr/bin/poweroff, /usr/bin/reboot, /usr/bin/wg-quick, \\
-                                    /usr/bin/mount, /usr/bin/umount, /usr/bin/openconnect, /usr/bin/pingtunnel, \\
-                                    /usr/bin/pkill pingtunnel, /usr/bin/openvpn, /usr/bin/pkill -x openvpn, \\
-                                    /usr/bin/systemctl start bluetooth.service, /usr/bin/systemctl stop bluetooth.service
-
-%wheel ALL=(ALL) NOPASSWD: NOPASSWD_COMMANDS
-EOF
-}
-
-# Configure sudoers
-configure_sudoers() {
-    log "Configuring sudoers..."
-    
-    sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /mnt/etc/sudoers
-}
-
 # Automated user creation (no user interaction) with proper error handling
 add_new_user_automated() {
     log "Adding new user: ${NEW_USER}..."
