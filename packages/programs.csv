@@ -228,6 +228,7 @@ official,syncthing
 official,git-filter-repo
 official,pyenv
 official,uv
+official,pnpm
 official,python-pip
 official,python-pipenv
 official,python-pipx
