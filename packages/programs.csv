@@ -152,7 +152,7 @@ official,fwupd
 official,polkit-gnome
 official,spotify-launcher
 official,wayvnc
-official,gammastep
+official,hyprsunset
 official,obs-studio
 official,wl-clipboard
 official,grim
@@ -226,6 +226,8 @@ official,openai-codex
 official,opencode
 official,syncthing
 official,git-filter-repo
+official,quickshell
+official,zenity
 official,pyenv
 official,uv
 official,pnpm
