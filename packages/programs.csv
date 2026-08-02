@@ -183,7 +183,6 @@ official,sddm
 official,qt6-svg
 official,qt6-virtualkeyboard
 official,qt6-multimedia
-official,waybar
 official,wireshark-qt
 official,zathura
 official,zathura-pdf-poppler
@@ -266,8 +265,6 @@ aur,visual-studio-code-bin
 aur,pingtunnel-git
 aur,tp-battery-mode
 aur,goldendict-ng
-aur,wofi-emoji
-aur,wlogout
 aur,simple-sddm-theme-git
 aur,dracula-gtk-theme
 aur,tmux-plugin-manager
