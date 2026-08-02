@@ -226,7 +226,6 @@ official,syncthing
 official,git-filter-repo
 official,quickshell
 official,zenity
-official,pyenv
 official,uv
 official,pnpm
 official,vulkan-intel
