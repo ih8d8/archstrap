@@ -30,6 +30,7 @@ source "${POST_INSTALL_SCRIPT_DIR}/apps/nano.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/proxychains.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/vi.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/sddm.sh"
+source "${POST_INSTALL_SCRIPT_DIR}/apps/voxtype.sh"
 
 # Source swap utilities
 source "${POST_INSTALL_SCRIPT_DIR}/../disk/swap.sh"
@@ -91,7 +92,11 @@ configure_system_post_install() {
     if ! configure_sddm; then
         fatal_error "Failed to configure SDDM"
     fi
-    
+
+    if ! configure_voxtype; then
+        fatal_error "Failed to configure voxtype"
+    fi
+
     if ! enable_services; then
         fatal_error "Failed to enable services"
     fi
