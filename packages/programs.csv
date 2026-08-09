@@ -229,6 +229,7 @@ official,uv
 official,pnpm
 official,vulkan-intel
 official,zed
+official,nvm
 official,python-pip
 official,python-pipenv
 official,python-pipx
@@ -251,7 +252,6 @@ official,ttf-cascadia-code-nerd
 aur,borna-fonts
 aur,brave-bin
 aur,mullvad-browser-bin
-aur,nvm
 aur,google-chrome
 aur,sublime-merge
 aur,bash-complete-alias
