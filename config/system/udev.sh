@@ -21,6 +21,11 @@ EOF
 # Suspend the system when battery level drops below 5% or lower
 SUBSYSTEM=="power_supply", ATTR{status}=="Discharging", ATTR{capacity}=="[0-5]", RUN+="/usr/bin/systemctl suspend"
 EOF
-    
+
+    cat > /mnt/etc/udev/rules.d/99-platform-profile.rules << 'EOF'
+# Let the desktop switch power profiles without a root prompt
+ACTION=="add", SUBSYSTEM=="platform-profile", RUN+="/usr/bin/chgrp wheel /sys%p/profile", RUN+="/usr/bin/chmod g+w /sys%p/profile"
+EOF
+
     log "Udev rules configured successfully"
 }
