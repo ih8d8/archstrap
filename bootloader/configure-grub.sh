@@ -26,7 +26,10 @@ grub_kernel_options() {
         blk_options="${blk_options} rootflags=subvol=@"
     fi
 
-    printf '%s rw loglevel=5 systemd.show_status=true' "${blk_options}"
+    # quiet/splash and the lowered log levels exist to keep the console clear for
+    # Plymouth; verbose boot output would scroll over the splash and the LUKS
+    # prompt. Drop `quiet splash` to get the old text boot back.
+    printf '%s rw quiet splash loglevel=3 rd.udev.log_level=3 vt.global_cursor_default=0' "${blk_options}"
 }
 
 set_grub_default() {
@@ -50,8 +53,12 @@ configure_grub() {
     set_grub_default "GRUB_TOP_LEVEL" "/boot/vmlinuz-linux"
     set_grub_default "GRUB_DEFAULT" "0"
     set_grub_default "GRUB_SAVEDEFAULT" "false"
+    # Shown, not hidden: snapshot entries live in a generated grub-btrfs.cfg
+    # whose titles rotate as snapper prunes, so grub-reboot cannot target them
+    # and the interactive menu is the only route back to a snapshot. Three
+    # seconds is long enough to choose one without waiting on every boot.
     set_grub_default "GRUB_TIMEOUT_STYLE" "menu"
-    set_grub_default "GRUB_TIMEOUT" "8"
+    set_grub_default "GRUB_TIMEOUT" "3"
     set_grub_default "GRUB_GFXMODE" "auto"
     set_grub_default "GRUB_GFXPAYLOAD_LINUX" "keep"
     set_grub_default "GRUB_TERMINAL_OUTPUT" "gfxterm"

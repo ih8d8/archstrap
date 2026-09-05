@@ -27,8 +27,15 @@ sudo -u ${NEW_USER} cargo install cargo-cache
 # Configure GOPATH
 echo "Configuring GOPATH..."
 sudo -u ${NEW_USER} go env -w GOPATH="/home/${NEW_USER}/.go"
-mv /home/${NEW_USER}/go /home/${NEW_USER}/.go || true
-chown -R ${NEW_USER}:wheel /home/${NEW_USER}/.go
+# go env -w records GOPATH but never creates it, and a freshly created account
+# has no ~/go to move, so chown -R aborted the whole script under set -e. The
+# -d check on the destination matters too: mv would put ~/go *inside* an
+# existing ~/.go rather than becoming it.
+if [ -d "/home/${NEW_USER}/go" ] && [ ! -d "/home/${NEW_USER}/.go" ]; then
+    mv "/home/${NEW_USER}/go" "/home/${NEW_USER}/.go"
+fi
+mkdir -p "/home/${NEW_USER}/.go"
+chown -R "${NEW_USER}:wheel" "/home/${NEW_USER}/.go"
 
 # Install Node.js
 echo "Installing Node.js and packages..."

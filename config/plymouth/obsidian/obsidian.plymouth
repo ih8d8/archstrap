@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=obsidian
+Description=LUKS passphrase prompt on a near-black ground.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/obsidian
+ScriptFile=/usr/share/plymouth/themes/obsidian/obsidian.script
+ConsoleLogBackgroundColor=0x0d1117

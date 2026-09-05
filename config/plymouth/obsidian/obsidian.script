@@ -1,0 +1,179 @@
+# obsidian — the LUKS passphrase prompt.
+#
+# Assets are authored at a 2160p reference and scaled down here, so the same
+# theme is crisp on the 1080p laptop panel and on a 4K display. Two factors do
+# all the work: `u` is one 1080p-reference unit in real pixels (every position
+# below is written in that reference), and `a` scales an asset from its 2160p
+# size to the current display.
+
+Window.SetBackgroundTopColor(0.051, 0.067, 0.090);
+Window.SetBackgroundBottomColor(0.051, 0.067, 0.090);
+
+global.u = Window.GetHeight() / 1080;
+global.a = Window.GetHeight() / 2160;
+
+global.attempts = 0;
+global.in_password = 0;
+global.dots = [];
+
+fun fit(image) {
+  return image.Scale(Math.Int(image.GetWidth() * global.a), Math.Int(image.GetHeight() * global.a));
+}
+
+#--------------------------------------------------------------- bloom
+
+# Scaled up rather than down: a wide gaussian has no edges to lose, so shipping
+# it small keeps the initramfs lean.
+bloom.image = Image("bloom.png").Scale(Math.Int(1040 * global.u), Math.Int(1040 * global.u));
+bloom.sprite = Sprite(bloom.image);
+bloom.sprite.SetPosition(Window.GetWidth() / 2 - bloom.image.GetWidth() / 2,
+                         580 * global.u - bloom.image.GetHeight() / 2, 0);
+bloom.sprite.SetOpacity(1);
+
+#--------------------------------------------------------------- greeting
+
+greeting.image = fit(Image("greeting.png"));
+greeting.sprite = Sprite(greeting.image);
+greeting.sprite.SetPosition(Window.GetWidth() / 2 - greeting.image.GetWidth() / 2,
+                            336 * global.u, 10);
+greeting.sprite.SetOpacity(1);
+
+#--------------------------------------------------------------- prompt line
+
+subtitle.image = fit(Image("subtitle.png"));
+subtitle.sprite = Sprite(subtitle.image);
+subtitle.sprite.SetPosition(Window.GetWidth() / 2 - subtitle.image.GetWidth() / 2,
+                            502 * global.u, 10);
+subtitle.sprite.SetOpacity(0);
+
+retry.image = fit(Image("retry.png"));
+retry.sprite = Sprite(retry.image);
+retry.sprite.SetPosition(Window.GetWidth() / 2 - retry.image.GetWidth() / 2,
+                         502 * global.u, 10);
+retry.sprite.SetOpacity(0);
+
+#--------------------------------------------------------------- passphrase field
+
+field.image = fit(Image("field.png"));
+field.sprite = Sprite(field.image);
+field.x = Window.GetWidth() / 2 - field.image.GetWidth() / 2;
+field.sprite.SetPosition(field.x, 600 * global.u, 10);
+field.sprite.SetOpacity(0);
+
+field_error.image = fit(Image("field_error.png"));
+field_error.sprite = Sprite(field_error.image);
+field_error.sprite.SetPosition(field.x, 600 * global.u, 10);
+field_error.sprite.SetOpacity(0);
+
+dot.image = fit(Image("dot.png"));
+
+#--------------------------------------------------------------- boot progress
+
+progress_track.image = fit(Image("progress_track.png"));
+progress_track.sprite = Sprite(progress_track.image);
+progress_track.x = Window.GetWidth() / 2 - progress_track.image.GetWidth() / 2;
+progress_track.sprite.SetPosition(progress_track.x, 633 * global.u, 10);
+progress_track.sprite.SetOpacity(0);
+
+progress_bar.original = Image("progress_bar.png");
+progress_bar.sprite = Sprite();
+progress_bar.sprite.SetPosition(progress_track.x, 633 * global.u, 11);
+progress_bar.sprite.SetOpacity(0);
+
+#--------------------------------------------------------------- helpers
+
+fun hide_dots() {
+  for (i = 0; global.dots[i]; i++) {
+    global.dots[i].SetOpacity(0);
+  }
+}
+
+fun hide_prompt() {
+  subtitle.sprite.SetOpacity(0);
+  retry.sprite.SetOpacity(0);
+  field.sprite.SetOpacity(0);
+  field_error.sprite.SetOpacity(0);
+  hide_dots();
+}
+
+fun hide_progress() {
+  progress_track.sprite.SetOpacity(0);
+  progress_bar.sprite.SetOpacity(0);
+}
+
+#--------------------------------------------------------------- callbacks
+
+fun display_password_callback(prompt, bullets) {
+  # Plymouth re-enters this state for each retry, so counting entries (not
+  # keystrokes) is what tells a second attempt from the first.
+  if (global.in_password == 0) {
+    global.in_password = 1;
+    global.attempts++;
+  }
+  hide_progress();
+
+  if (global.attempts > 1) {
+    subtitle.sprite.SetOpacity(0);
+    retry.sprite.SetOpacity(1);
+    field.sprite.SetOpacity(0);
+    field_error.sprite.SetOpacity(1);
+  } else {
+    subtitle.sprite.SetOpacity(1);
+    retry.sprite.SetOpacity(0);
+    field.sprite.SetOpacity(1);
+    field_error.sprite.SetOpacity(0);
+  }
+
+  hide_dots();
+
+  shown = bullets;
+  if (shown > 16) {
+    shown = 16;
+  }
+
+  size = dot.image.GetWidth();
+  gap = 18 * global.u;
+  span = shown * size + (shown - 1) * gap;
+  left = Window.GetWidth() / 2 - span / 2;
+  top = 634 * global.u - size / 2;
+
+  for (i = 0; i < shown; i++) {
+    if (!global.dots[i]) {
+      global.dots[i] = Sprite(dot.image);
+    }
+    global.dots[i].SetPosition(left + i * (size + gap), top, 20);
+    global.dots[i].SetOpacity(1);
+  }
+}
+
+fun display_normal_callback() {
+  global.in_password = 0;
+  hide_prompt();
+
+  # Only after the disk is unlocked is there anything worth showing progress
+  # for; before that the greeting alone is the whole screen.
+  if (global.attempts > 0) {
+    progress_track.sprite.SetOpacity(1);
+    progress_bar.sprite.SetOpacity(1);
+  }
+}
+
+fun boot_progress_callback(duration, progress) {
+  width = Math.Int(progress_track.image.GetWidth() * progress);
+  if (width < 1) {
+    width = 1;
+  }
+  progress_bar.sprite.SetImage(progress_bar.original.Scale(width, progress_track.image.GetHeight()));
+}
+
+fun quit_callback() {
+  bloom.sprite.SetOpacity(0);
+  greeting.sprite.SetOpacity(0);
+  hide_prompt();
+  hide_progress();
+}
+
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetBootProgressFunction(boot_progress_callback);
+Plymouth.SetQuitFunction(quit_callback);

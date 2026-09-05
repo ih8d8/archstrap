@@ -30,6 +30,7 @@ source "${POST_INSTALL_SCRIPT_DIR}/apps/nano.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/proxychains.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/vi.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/sddm.sh"
+source "${POST_INSTALL_SCRIPT_DIR}/apps/plymouth.sh"
 source "${POST_INSTALL_SCRIPT_DIR}/apps/voxtype.sh"
 
 # Source swap utilities
@@ -91,6 +92,10 @@ configure_system_post_install() {
     
     if ! configure_sddm; then
         fatal_error "Failed to configure SDDM"
+    fi
+
+    if ! configure_plymouth; then
+        fatal_error "Failed to configure Plymouth"
     fi
 
     if ! configure_voxtype; then

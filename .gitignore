@@ -1,2 +1,4 @@
 # Private environment variables (contains user-specific settings)
 settings/env-private.sh
+# Python bytecode cache (generate-assets.py)
+__pycache__/
