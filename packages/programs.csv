@@ -228,6 +228,7 @@ official,uv
 official,pnpm
 official,vulkan-intel
 official,zed
+official,shellchek
 official,nvm
 official,github-cli
 official,python-pip
