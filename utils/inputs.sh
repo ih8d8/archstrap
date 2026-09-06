@@ -371,7 +371,7 @@ select_secondary_language() {
     local dialog_exit_code=$?
     
     # Clear the dialog screen
-    clear
+    clear 2>/dev/null || true
     
     # Handle dialog exit (cancel or ESC pressed)
     if [[ $dialog_exit_code -ne 0 ]]; then

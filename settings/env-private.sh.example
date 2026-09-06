@@ -16,7 +16,7 @@
 # If set, you won't be prompted for language selection during installation
 # Use locale codes from /etc/locale.gen, e.g., "de_DE.UTF-8", etc.
 # Leave empty or unset for English only
-#SECONDARY_LANGUAGE="de_DE.UTF-8 UTF-8"
+#SECONDARY_LANGUAGE="de_DE.UTF-8"
 
 # Bootloader selection (optional)
 # Supported values: grub, refind

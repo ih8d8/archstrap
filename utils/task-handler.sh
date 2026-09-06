@@ -75,7 +75,8 @@ init_tasks() {
 
 # Display the task list with current status
 display_task_list() {
-    clear
+    # clear fails without TERM (e.g. run over ssh), and set -e would abort
+    clear 2>/dev/null || true
     echo -e "${BOLD}${CYAN}╔═══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BOLD}${CYAN}║                         ARCH LINUX INSTALLER                  ║${NC}"
     echo -e "${BOLD}${CYAN}╠═══════════════════════════════════════════════════════════════╣${NC}"

@@ -34,7 +34,7 @@ add_root_snapshots_to_fstab() {
     fi
     
     local root_uuid=$(blkid -s UUID -o value "${root_device}")
-    local snapshots_entry="UUID=${root_uuid}       /.snapshots     btrfs           rw,relatime,compress=zstd:3,space_cache=v2,subvol=@/.snapshots    0 0"
+    local snapshots_entry="UUID=${root_uuid}       /.snapshots     btrfs           rw,relatime,compress=zstd:3,space_cache=v2,subvol=@/.snapshots,nofail    0 0"
     
     # Add snapshots entry only after the root filesystem line (/) - make pattern specific
     local device_comment
