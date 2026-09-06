@@ -230,7 +230,6 @@ official,vulkan-intel
 official,zed
 official,shellcheck
 official,plymouth
-official,nvm
 official,github-cli
 official,python-pip
 official,python-pipenv
