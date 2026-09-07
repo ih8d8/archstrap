@@ -230,6 +230,7 @@ official,vulkan-intel
 official,zed
 official,shellcheck
 official,plymouth
+official,gpu-screen-recorder
 official,github-cli
 official,python-pip
 official,python-pipenv
