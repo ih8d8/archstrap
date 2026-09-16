@@ -230,7 +230,6 @@ official,vulkan-intel
 official,zed
 official,shellcheck
 official,plymouth
-official,ddcutil
 official,gpu-screen-recorder
 official,github-cli
 official,python-pip
@@ -274,6 +273,7 @@ aur,mullvad-vpn-bin
 aur,ufw-docker
 aur,refind-btrfs-snapshots-bin
 aur,julia-bin
+aur,elan-lean
 aur,herdr-bin
 aur,voxtype-bin
 aur,playwright
