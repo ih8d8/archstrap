@@ -231,6 +231,7 @@ official,zed
 official,shellcheck
 official,plymouth
 official,ddcutil
+official,duf
 official,gpu-screen-recorder
 official,github-cli
 official,python-pip
