@@ -235,7 +235,6 @@ official,duf
 official,gpu-screen-recorder
 official,github-cli
 official,python-pip
-official,python-pipenv
 official,python-pipx
 official,python-numpy
 official,python-requests
