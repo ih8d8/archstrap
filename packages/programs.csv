@@ -234,6 +234,16 @@ official,ddcutil
 official,duf
 official,gpu-screen-recorder
 official,github-cli
+official,texlive-basic
+official,texlive-latex
+official,texlive-latexrecommended
+official,texlive-latexextra
+official,texlive-fontsrecommended
+official,texlive-mathscience
+official,texlive-pictures
+official,texlive-publishers
+official,texlive-binextra
+official,texlive-xetex
 official,python-pip
 official,python-pipx
 official,python-numpy
