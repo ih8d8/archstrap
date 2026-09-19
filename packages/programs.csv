@@ -244,6 +244,7 @@ official,texlive-pictures
 official,texlive-publishers
 official,texlive-binextra
 official,texlive-xetex
+official,texlive-fontsextra
 official,python-pip
 official,python-pipx
 official,python-numpy
