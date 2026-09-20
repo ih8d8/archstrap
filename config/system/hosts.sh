@@ -10,7 +10,11 @@ fi
 configure_hosts() {
     log "Configuring hosts file..."
     
-    cat <<EOF >>/mnt/etc/hosts
+    # Written, not appended: the base install already ships an /etc/hosts with
+    # the two localhost lines, so appending produced a second copy of each.
+    cat <<EOF >/mnt/etc/hosts
+# Static table lookup for hostnames.
+# See hosts(5) for details.
 127.0.0.1    localhost
 ::1          localhost
 127.0.1.1    ${HOSTNAME}
