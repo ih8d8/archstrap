@@ -39,25 +39,43 @@ EOF
     arch-chroot /mnt ./configure_dnscrypt.sh || error "Failed to configure dnscrypt-proxy!"
     rm -f /mnt/configure_dnscrypt.sh
     
-    # Add the resolvconf-dnscrypt-proxy systemd service
-    add_resolvconf_dnscrypt_proxy_systemd_service
+    # Hand DNS over to systemd-resolved, resolving through dnscrypt-proxy
+    configure_resolved_for_dnscrypt
 }
 
-# Add resolvconf-dnscrypt-proxy systemd service
-add_resolvconf_dnscrypt_proxy_systemd_service() {
-    log "Adding resolvconf-dnscrypt-proxy systemd service..."
-    
-    # Create resolvconf-dnscrypt-proxy service
-    cat > /mnt/etc/systemd/system/resolvconf-dnscrypt-proxy.service << 'EOF'
-[Unit]
-Description=systemd service for setting /etc/resolv.conf based on dnscrypt-proxy requirements
+# Point systemd-resolved at dnscrypt-proxy
+configure_resolved_for_dnscrypt() {
+    log "Configuring systemd-resolved to resolve through dnscrypt-proxy..."
 
-[Service]
-ExecStart=/usr/bin/bash -c '/usr/bin/echo -e "nameserver ::1\nnameserver 127.0.0.1\noptions edns0 single-request-reopen" | /usr/bin/resolvconf -a dnscrypt; /usr/bin/resolvconf -u'
+    mkdir -p /mnt/etc/systemd/resolved.conf.d
 
-[Install]
-WantedBy=multi-user.target
+    # Kept separate from the drop-in below because toggle-dnscrypt-proxy renames
+    # that one out of the way to switch DNSCrypt off: the fallback servers must
+    # stay disabled in both states. Without this, resolved quietly resolves
+    # through plaintext Google/Cloudflare/Quad9 whenever its configured server
+    # is unreachable.
+    cat > /mnt/etc/systemd/resolved.conf.d/00-no-fallback.conf << 'EOF'
+[Resolve]
+FallbackDNS=
 EOF
-    
-    log "resolvconf-dnscrypt-proxy systemd service added successfully"
+
+    cat > /mnt/etc/systemd/resolved.conf.d/10-dnscrypt.conf << 'EOF'
+[Resolve]
+# dnscrypt-proxy listens here. IPv4 only: it does not bind [::1]:53, and
+# listing ::1 makes every lookup pay three refused attempts first.
+DNS=127.0.0.1
+# "~." routes every name to the server above, outranking the per-link resolvers
+# DHCP hands out - otherwise the network's own DNS would answer. Tailscale's
+# per-interface domains are more specific, so tailnet names still win.
+Domains=~.
+# dnscrypt-proxy already enforces DNSSEC upstream (require_dnssec = true).
+DNSSEC=no
+DNSOverTLS=no
+EOF
+
+    # resolv.conf points at the stub resolver rather than at 127.0.0.1 directly,
+    # so per-link search domains and Tailscale's split routing still apply.
+    ln -sf /run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
+
+    log "systemd-resolved configured successfully"
 }

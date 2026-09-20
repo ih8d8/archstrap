@@ -29,7 +29,7 @@ official,net-tools
 official,man-db
 official,bash-completion
 official,fd
-official,openresolv
+official,systemd-resolvconf
 official,wireguard-tools
 official,p7zip
 official,pass-otp

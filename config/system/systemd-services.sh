@@ -11,7 +11,7 @@ enable_services() {
     log "Enabling required services..."
     
     local SERVICES="sddm.service fstrim.timer haveged.service cronie.service vnstat.service atd.service tlp.service
-thermald.service cpupower.service libvirtd.service dnscrypt-proxy.service resolvconf-dnscrypt-proxy.service
+thermald.service cpupower.service libvirtd.service dnscrypt-proxy.service systemd-resolved.service
 bluetooth.service cups.service tailscaled.service ufw.service"
 
     for SERVICE in ${SERVICES}; do
@@ -40,7 +40,7 @@ bluetooth.service cups.service tailscaled.service ufw.service"
 disable_services() {
     log "Disabling unwanted services..."
     
-    local SERVICES="NetworkManager-wait-online.service systemd-resolved.service"
+    local SERVICES="NetworkManager-wait-online.service"
     
     for SERVICE in ${SERVICES}; do
         arch-chroot /mnt systemctl disable "${SERVICE}" || warning "Failed to disable ${SERVICE}"

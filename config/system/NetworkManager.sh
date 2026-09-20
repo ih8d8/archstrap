@@ -12,9 +12,9 @@ configure_networkmanager() {
     
     mkdir -p /mnt/etc/NetworkManager/conf.d
     
-    cat > /mnt/etc/NetworkManager/conf.d/rc-manager.conf << 'EOF'
+    cat > /mnt/etc/NetworkManager/conf.d/dns.conf << 'EOF'
 [main]
-rc-manager=resolvconf
+dns=systemd-resolved
 EOF
 
     cat > /mnt/etc/NetworkManager/conf.d/unmanaged.conf << 'EOF'
