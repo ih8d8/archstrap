@@ -153,6 +153,7 @@ official,wayvnc
 official,hyprsunset
 official,obs-studio
 official,wl-clipboard
+official,wtype
 official,grim
 official,slurp
 official,pamixer
@@ -206,7 +207,6 @@ official,kdeconnect
 official,bandwhich
 official,traceroute
 official,clamav
-official,rofi
 official,rbw
 official,eza
 official,openbsd-netcat
